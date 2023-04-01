@@ -46,13 +46,13 @@ void AssetFactory::loadMeshes()
 {
     AssetFactory& instance = getInstance();
     instance._meshes.screen.reset(new lithium::Mesh(AssetFactory::objectAttributes, screenMeshVertices, screenMeshIndices));
-    instance._meshes.mesh.reset(new lithium::Mesh(AssetFactory::objectAttributes, screenMeshVertices, screenMeshIndices));
+    instance._meshes.cube = lithium::tinyobjloader_load("assets/block.obj", objectAttributes);
 }
 
 void AssetFactory::loadTextures()
 {
     AssetFactory& instance = getInstance();
-    instance._textures.diffuse.reset((lithium::ImageTexture*)lithium::ImageTexture::load("assets/diffuse.png", GL_SRGB_ALPHA, GL_RGBA)->setFilter(GL_NEAREST));
+    instance._textures.logoDiffuse.reset((lithium::ImageTexture*)lithium::ImageTexture::load("assets/Kraxbox_logo_lithium_metal_2ff2069c-b84a-426c-bf92-e9831105a5df.png", GL_SRGB_ALPHA, GL_RGBA)->setFilter(GL_NEAREST));
 }
 
 void AssetFactory::loadObjects()

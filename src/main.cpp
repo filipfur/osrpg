@@ -5,14 +5,14 @@
 class App : public lithium::Application
 {
 public:
-    App() : Application{"A simple application", glm::ivec2{600}, lithium::Application::Mode::DEFAULT, false}
+    App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Application::Mode::DEFAULT, false}
     {
         AssetFactory::loadMeshes();
         AssetFactory::loadTextures();
         AssetFactory::loadObjects();
         AssetFactory::loadFonts();
-        _object = std::shared_ptr<lithium::Object>(new lithium::Object(AssetFactory::getMeshes()->mesh,
-            {AssetFactory::getTextures()->diffuse}));
+        _object = std::shared_ptr<lithium::Object>(new lithium::Object(AssetFactory::getMeshes()->cube,
+            {AssetFactory::getTextures()->logoDiffuse}));
         _object->setPosition(glm::vec3{0.0f});
         _object->setScale(1.0f);
         _renderPipeline = new Pipeline(defaultFrameBufferResolution());
@@ -48,7 +48,7 @@ private:
 
 int main(int argc, const char* argv[])
 {
-    App* app = new App();
+    std::unique_ptr<App> app = std::make_unique<App>();
     app->run();
     return 0;
 }
