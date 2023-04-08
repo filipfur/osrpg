@@ -5,7 +5,7 @@
 class App : public lithium::Application
 {
 public:
-    App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Application::Mode::DEFAULT, false}
+    App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Application::Mode::MULTISAMPLED_4X, false}
     {
         AssetFactory::loadMeshes();
         AssetFactory::loadTextures();
