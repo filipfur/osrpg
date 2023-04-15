@@ -18,6 +18,7 @@ public:
         _renderPipeline = new Pipeline(defaultFrameBufferResolution());
         _renderPipeline->addRenderable(_object.get());
         _objects.push_back(_object);
+        printf("%s\n", glGetString(GL_VERSION));
     }
 
     virtual ~App() noexcept
