@@ -16,8 +16,9 @@ public:
         _object->setPosition(glm::vec3{0.0f});
         _object->setScale(1.0f);
         _renderPipeline = new Pipeline(defaultFrameBufferResolution());
-        _renderPipeline->addRenderable(_object.get());
+        _renderPipeline->attach(_object.get());
         _objects.push_back(_object);
+        _object->stage();
         printf("%s\n", glGetString(GL_VERSION));
     }
 
