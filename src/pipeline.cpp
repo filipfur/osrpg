@@ -58,4 +58,6 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
 Pipeline::~Pipeline()
 {
     _blockShader = nullptr;
+    _screenShader = nullptr;
+    _msaaShader = nullptr;
 }
