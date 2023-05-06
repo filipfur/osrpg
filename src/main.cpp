@@ -15,15 +15,22 @@ public:
             {AssetFactory::getTextures()->logoDiffuse}));
         _object->setPosition(glm::vec3{0.0f});
         _object->setScale(1.0f);
-        _renderPipeline = new Pipeline(defaultFrameBufferResolution());
+        _renderPipeline = std::make_shared<Pipeline>(defaultFrameBufferResolution());
         _renderPipeline->attach(_object.get());
         _objects.push_back(_object);
         _object->stage();
+
+        input()->addPressedCallback(GLFW_KEY_ESCAPE, [this](int key, int mods) {
+            this->close();
+            return true;
+        });
+
         printf("%s\n", glGetString(GL_VERSION));
     }
 
     virtual ~App() noexcept
     {
+        _renderPipeline = nullptr;
     }
 
     virtual void update(float dt) override
@@ -43,7 +50,7 @@ public:
     }
 
 private:
-    Pipeline* _renderPipeline{nullptr};
+    std::shared_ptr<Pipeline> _renderPipeline{nullptr};
     std::vector<std::shared_ptr<lithium::Object>> _objects;
     std::shared_ptr<lithium::Object> _object;
 };

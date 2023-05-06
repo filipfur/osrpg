@@ -10,7 +10,7 @@ class Pipeline : public lithium::RenderPipeline
 public:
     Pipeline(const glm::ivec2& resolution);
 
-    ~Pipeline();
+    ~Pipeline() noexcept;
 
     std::shared_ptr<lithium::SimpleCamera> camera()
     {
