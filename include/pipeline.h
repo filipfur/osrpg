@@ -28,4 +28,6 @@ private:
     std::shared_ptr<lithium::RenderStage> _finalStage;
 
     std::shared_ptr<lithium::FrameBuffer> _frameBuffer;
+    
+    std::shared_ptr<lithium::Mesh> _screenMesh;
 };

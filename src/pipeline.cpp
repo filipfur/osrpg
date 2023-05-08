@@ -1,5 +1,5 @@
-#include "assetfactory.h"
 #include "pipeline.h"
+#include "shape.h"
 
 Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resolution},
     _camera{new lithium::SimpleCamera(glm::perspective(glm::radians(45.0f), (float)resolution.x / (float)resolution.y, 0.1f, 100.0f))},
@@ -25,20 +25,23 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
     _frameBuffer->declareBuffers();
     _frameBuffer->unbind();
 
+    _screenMesh = std::shared_ptr<lithium::Mesh>(shape::Plane());
+
     _mainGroup = createRenderGroup([this](lithium::Renderable* renderable) -> bool {
         return dynamic_cast<lithium::Object*>(renderable);
     });
     _mainStage = addRenderStage(std::make_shared<lithium::RenderStage>(_frameBuffer, glm::ivec4{0, 0, resolution.x, resolution.y}, [this](){
         clearColor(0.8f, 1.0f, 0.8f, 1.0f);
         clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        _blockShader->setUniform("u_view", _camera->view());
-        _blockShader->setUniform("u_time", 0.0f);
+
         _screenShader->use();
-        AssetFactory().getMeshes()->screen->bind();
+        _screenMesh->bind();
         glActiveTexture(GL_TEXTURE0);
         disableDepthWriting();
-        AssetFactory().getMeshes()->screen->draw();
+        _screenMesh->draw();
         enableDepthWriting();
+        _blockShader->setUniform("u_view", _camera->view());
+        _blockShader->setUniform("u_time", 0.0f);
         _mainGroup->render(_blockShader.get());
     }));
 
@@ -48,8 +51,8 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
         _msaaShader->use();
         _mainStage->frameBuffer()->texture(GL_COLOR_ATTACHMENT0)->bind(GL_TEXTURE0);
         _mainStage->frameBuffer()->bindTexture(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE1);
-        AssetFactory::getMeshes()->screen->bind();
-        AssetFactory::getMeshes()->screen->draw();
+        _screenMesh->bind();
+        _screenMesh->draw();
     }));
 
     setViewportToResolution();
@@ -60,4 +63,5 @@ Pipeline::~Pipeline()
     _blockShader = nullptr;
     _screenShader = nullptr;
     _msaaShader = nullptr;
+    _screenMesh = nullptr;
 }
