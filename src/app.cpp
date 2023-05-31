@@ -59,7 +59,6 @@ void App::update(float dt)
     float camZ = sin(_cameraAngle) * cameraRadius;
 
     _pipeline->camera()->setPosition(glm::vec3{camX, camY, camZ});
-    _pipeline->camera()->update(dt);
     _pipeline->render();
 }
 
