@@ -1,5 +1,7 @@
 #include "assetfactory.h"
 
+#include "glplane.h"
+
 AssetFactory::AssetFactory()
 {
 
@@ -21,31 +23,10 @@ static constexpr attr COLOR{attr::VEC3};
 const std::vector<attr> AssetFactory::objectAttributes{POSITION, NORMAL, UV};
 const std::vector<attr> AssetFactory::modelAttributes{POSITION, NORMAL, UV, BONE_IDS, BONE_WEIGHTS};
 
-static const std::vector<attr> screenMeshAttributes = { POSITION, NORMAL, UV };
-
-static const std::vector<GLfloat> screenMeshVertices = {
-    -1.0, -1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-    -1.0,  1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 1.0, 
-    1.0,  1.0, 0.0f,	0.0f, 1.0f, 0.0f,	1.0, 1.0,  
-    1.0, -1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	1.0, 0.0f
-};
-
-static const std::vector<GLfloat> billboardMeshVertices = {
-    -0.5f, -0.0f, +0.0f, 	+0.0f, +1.0f, +0.0f,	+0.0f, +0.0f,
-    -0.5f, +1.0f, +0.0f, 	+0.0f, +1.0f, +0.0f,	+0.0f, +1.0f,
-    +0.5f, +1.0f, +0.0f,	+0.0f, +1.0f, +0.0f,	+1.0f, +1.0f,
-    +0.5f, -0.0f, +0.0f, 	+0.0f, +1.0f, +0.0f,	+1.0f, +0.0f,
-};
-
-static const std::vector<GLuint> screenMeshIndices = {
-    0, 2, 1,
-    0, 3, 2
-};
-
 void AssetFactory::loadMeshes()
 {
     AssetFactory& instance = getInstance();
-    instance._meshes.screen.reset(new lithium::Mesh(AssetFactory::objectAttributes, screenMeshVertices, screenMeshIndices));
+    instance._meshes.screen.reset(lithium::Plane2D());
     instance._meshes.cube = lithium::tinyobjloader_load("assets/block.obj", objectAttributes);
 }
 
