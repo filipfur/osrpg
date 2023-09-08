@@ -56,6 +56,7 @@ App::~App() noexcept
 
 void App::update(float dt)
 {
+    lithium::Updateable::update(dt);
     // Apply a rotation to the cube.
     for(auto o : _objects)
     {

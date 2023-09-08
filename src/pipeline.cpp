@@ -33,8 +33,10 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
     _mainGroup = createRenderGroup([this](lithium::Renderable* renderable) -> bool {
         return dynamic_cast<lithium::Object*>(renderable) && !renderable->hasAttachments();
     });
+
+    clearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
     _mainStage = addRenderStage(std::make_shared<lithium::RenderStage>(_frameBuffer, [this](){
-        clearColor(0.0f, 0.0f, 0.0f, 1.0f);
         clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         disableDepthWriting();
         _screenGroup->render(_screenShader.get());
@@ -46,7 +48,6 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
 
     _finalStage = addRenderStage(std::make_shared<lithium::RenderStage>(nullptr, [this](){
         setViewportToResolution();
-        clearColor(0.0f, 0.0f, 0.0f, 1.0f);
         clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _msaaShader->use();
         _mainStage->frameBuffer()->texture(GL_COLOR_ATTACHMENT0)->bind(GL_TEXTURE0);
@@ -60,9 +61,6 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
 void Pipeline::setResolution(const glm::ivec2& resolution)
 {
     lithium::RenderPipeline::setResolution(resolution);
-    //_msaaShader->setUniform("u_resolution", resolution);
-    //_camera->setProjection(glm::perspective(glm::radians(45.0f), (float)resolution.x / (float)resolution.y, 0.1f, 100.0f));
-    //_blockShader->setUniform("u_projection", _camera->projection());
 }
 
 Pipeline::~Pipeline()
