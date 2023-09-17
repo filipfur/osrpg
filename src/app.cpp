@@ -2,6 +2,7 @@
 
 #include "assetfactory.h"
 #include "glassetlibrary.h"
+#include "glplane.h"
 
 App::App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Application::Mode::MULTISAMPLED_4X, false}
 {
@@ -13,22 +14,6 @@ App::App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Applicat
     
     // Create the render pipeline
     _pipeline = std::make_shared<Pipeline>(defaultFrameBufferResolution());
-
-    // Create and add a background plane to the render pipeline, and stage it for rendering.
-    _background = std::make_shared<lithium::Object>(AssetFactory::getMeshes()->screen,
-        std::vector<lithium::Object::TexturePointer>{});
-    _background->setGroupId(Pipeline::BACKGROUND);
-    _pipeline->attach(_background.get());
-    _background->stage();
-
-    // Create and add a cube to the render pipeline, and stage it for rendering.
-    /*auto cube = std::make_shared<lithium::Object>(AssetFactory::getMeshes()->cube,
-        std::vector<lithium::Object::TexturePointer>{AssetFactory::getTextures()->logoDiffuse});
-    cube->setPosition(glm::vec3{0.0f});
-    cube->setScale(1.0f);
-    _pipeline->attach(cube.get());
-    _objects.push_back(cube);
-    cube->stage();*/
 
     // Key cache for rotating the camera left and right.
     _keyCache = std::make_shared<lithium::Input::KeyCache>(
@@ -49,15 +34,30 @@ App::App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Applicat
 
     lithium::AssetLibrary& lib = lithium::AssetLibrary::getInstance();
     std::cout << "Asset Library objects:" << std::endl;
+    int x{0};
     for(auto o : lib)
     {
-        std::cout << o.first << std::endl;
-        o.second->setPosition(glm::vec3{0.0f, 0.0f, 0.0f});
+        std::cout << o.first << " number of vertices: " << o.second->mesh()->elementArrayBuffer()->count() << std::endl;
+        o.second->setPosition(glm::vec3{(x % 3) * 2.0f - 2.0f, 0.0f, (x / 3) * 2.0f -2.0f});
+        x += 1;
         o.second->setScale(4.0f);
         _pipeline->attach(o.second.get());
         _objects.push_back(o.second);
         o.second->stage();
     }
+
+    static auto floorTexture = std::shared_ptr<lithium::ImageTexture>(lithium::ImageTexture::load("assets/floor/floor.png", GL_SRGB_ALPHA, GL_RGBA));
+    floorTexture->setFilter(GL_NEAREST);
+    floorTexture->setWrap(GL_REPEAT);
+    std::shared_ptr<lithium::Object> floor = std::make_shared<lithium::Object>(
+        std::shared_ptr<lithium::Mesh>(lithium::Plane3D(glm::vec2(99.0f), glm::vec2{99.0f})),
+        std::vector<lithium::Object::TexturePointer>{floorTexture});
+    floor->setQuaternion(glm::angleAxis(glm::radians(-90.0f), glm::vec3{1.0f, 0.0f, 0.0f}));
+    _objects.push_back(floor);
+    _pipeline->attach(floor.get());
+    floor->stage();
+
+    setMaxFps(120.0f);
 
     printf("%s\n", glGetString(GL_VERSION));
 }

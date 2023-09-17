@@ -13,8 +13,8 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
     _blockShader = std::make_shared<lithium::ShaderProgram>("shaders/object.vert", "shaders/object.frag");
     _blockShader->setUniform("u_texture_0", 0);
     _blockShader->setUniform("u_projection", _camera->projection());
-    _screenShader = std::make_shared<lithium::ShaderProgram>("shaders/screenshader.vert", "shaders/screenshader.frag");
-    _msaaShader = std::make_shared<lithium::ShaderProgram>("shaders/screenshader.vert", "shaders/msaa.frag");
+
+    _msaaShader = std::make_shared<lithium::ShaderProgram>("shaders/screen.vert", "shaders/msaa.frag");
     _msaaShader->setUniform("u_texture", 0);
     _msaaShader->setUniform("u_resolution", resolution);
 
@@ -26,10 +26,6 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
 
     _screenMesh = std::shared_ptr<lithium::Mesh>(lithium::Plane2D());
 
-    _screenGroup = createRenderGroup([this](lithium::Renderable* renderable) -> bool {
-        return renderable->groupId() == BACKGROUND;
-    });
-
     _mainGroup = createRenderGroup([this](lithium::Renderable* renderable) -> bool {
         return dynamic_cast<lithium::Object*>(renderable) && !renderable->hasAttachments();
     });
@@ -38,9 +34,6 @@ Pipeline::Pipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resol
 
     _mainStage = addRenderStage(std::make_shared<lithium::RenderStage>(_frameBuffer, [this](){
         clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        disableDepthWriting();
-        _screenGroup->render(_screenShader.get());
-        enableDepthWriting();
         _blockShader->setUniform("u_view", _camera->view());
         _blockShader->setUniform("u_time", 0.0f);
         _mainGroup->render(_blockShader.get());
@@ -66,7 +59,6 @@ void Pipeline::setResolution(const glm::ivec2& resolution)
 Pipeline::~Pipeline()
 {
     _blockShader = nullptr;
-    _screenShader = nullptr;
     _msaaShader = nullptr;
     _screenMesh = nullptr;
 }
