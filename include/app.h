@@ -18,7 +18,7 @@ public:
 protected:
     virtual void onFpsCount(int fps) override
     {
-        printf("FPS: %d\n", fps);
+        //printf("FPS: %d\n", fps);
     }
 
 private:
