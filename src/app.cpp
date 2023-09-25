@@ -4,6 +4,7 @@
 #include "glassetlibrary.h"
 #include "glplane.h"
 #include "glinstancedobject.h"
+#include "glcubemaphdr.h"
 
 App::App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Application::Mode::MULTISAMPLED_4X, false}
 {
@@ -89,7 +90,7 @@ App::App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Applicat
     for(int i{0}; i < 100; ++i)
     {
         instancedObject->addInstance(glm::scale(glm::translate(glm::mat4(1.0f),
-                glm::vec3{(rand() % 100 - 50) * 0.1f, 0.0f, (rand() % 100 - 50) * 0.1f}),
+                glm::vec3{(rand() % 100 - 50) * 0.1f, 0.0f, (rand() % 100 - 50) * 0.1f + 3.0f}),
             glm::vec3{1.0f + (rand() % 20 - 10) * 0.05f}));
     }
     instancedObject->allocateBufferData();
@@ -102,6 +103,13 @@ App::App() : Application{"lithium-lab", glm::ivec2{1440, 800}, lithium::Applicat
     _objects.push_back(instancedObject);
     _pipeline->attach(instancedObject.get());
     instancedObject->stage();
+
+
+    static auto cubemapHDR = lithium::CubemapHDR::load("assets/dikhololo_night_4k.hdr");
+    //_cubemapHDR->brdfLUT()->bind(GL_TEXTURE7);
+    //_cubemapHDR->irradianceMap()->bind(GL_TEXTURE8);
+    //_cubemapHDR->prefilterMap()->bind(GL_TEXTURE9);
+    _pipeline->setCubemap(cubemapHDR);
 
     /*auto torusObject = std::make_shared<lithium::Object>(
         std::shared_ptr<lithium::Mesh>(lib.object("Collection.001")->child(0)->mesh()->clone()),
@@ -164,7 +172,7 @@ void App::update(float dt)
     }
     static const float cameraRadius = 16.0f;
     float camX = sin(_cameraAngle) * cameraRadius;
-    static const float camY = 12.0f;
+    static const float camY = 8.0f;
     float camZ = cos(_cameraAngle) * cameraRadius;
     //_pipeline->camera()->setTarget(lithium::AssetLibrary::object("Collection.004")->position());
     _pipeline->camera()->setTarget(glm::vec3{0.0f, 6.0f, 0.0f});

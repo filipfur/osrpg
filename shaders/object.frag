@@ -25,7 +25,7 @@ void main()
 
     float spec = pow(max(dot(normalize(u_view_pos - fragPos), reflect(-lightDir, normal)), 0.0), 128.0);
 
-    vec3 lightning = ambient + (diffuse + spec * 0.5) * 0.5;
+    vec3 lightning = ambient + (diffuse + spec * 0.5) * 0.5 * vec3(0.9, 0.4, 0.2);
 
     fragColor = vec4(lightning, 1.0);
     fragColor.rgb = vec3(1.0) - exp(-fragColor.rgb * exposure);
